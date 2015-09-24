@@ -14,7 +14,8 @@ var gulp = require('gulp'),
 
 module.exports = function (config) {
     return function () {
-        return gulp.src(config.src)
+        config.options = Object.assign({}, config.options);
+        var stream = gulp.src(config.src)
             .pipe(cached('styles'))
             .on('error', gutil.log.bind(this, error + ' CSS Error '))
             .pipe(less())
@@ -22,15 +23,18 @@ module.exports = function (config) {
                 return gutil.colors.green(success) + ' ' + filepath;
             }))
             .pipe(remember('styles'))
-            .pipe(concat('site.css'))
-            .pipe(uncss({
-                html: ['index.html']
-            }))
-            .pipe(autoprefixer({
-                browsers: ['last 2 versions'],
-                cascade: false
-            }))
+            .pipe(concat('site.css'));
+        if (config.options.uncss) {
+            stream.pipe(uncss({
+                html: config.options.uncss.files || ['index.html']
+            }));
+        }
+        stream.pipe(autoprefixer({
+            browsers: ['last 2 versions'],
+            cascade: false
+        }))
             .pipe(csso())
             .pipe(gulp.dest(config.dest));
+        return gulp;
     };
 };
