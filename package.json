@@ -1,6 +1,6 @@
 {
   "name": "gulp-boilerplate-css",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Bootstrap for gulp tasks",
   "main": "gulpfile.js",
   "scripts": {
@@ -21,6 +21,7 @@
     "gulp-less": "^3.0.2",
     "gulp-print": "^1.1.0",
     "gulp-remember": "^0.3.0",
+    "gulp-sass": "^2.0.4",
     "gulp-uncss": "^1.0.1",
     "gulp-util": "^3.0.4",
     "object-assign": "^4.0.1",
