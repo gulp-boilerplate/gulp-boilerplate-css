@@ -10,11 +10,12 @@ var gulp = require('gulp'),
     cached = require('gulp-cached'),
     success = symbols.success,
     error = symbols.error,
-    autoprefixer = require('gulp-autoprefixer');
+    autoprefixer = require('gulp-autoprefixer'),
+    assign = require('object-assign');
 
 module.exports = function (config) {
     return function () {
-        config.options = Object.assign({}, config.options);
+        config.options = assign({}, config.options);
         var stream = gulp.src(config.src)
             .pipe(cached('styles'))
             .on('error', gutil.log.bind(this, error + ' CSS Error '))
