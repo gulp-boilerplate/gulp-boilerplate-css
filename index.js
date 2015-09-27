@@ -19,9 +19,9 @@ module.exports = function (config) {
 
     config.options = assign({}, config.options);
     config.src.each(function (item) {
-        if (/^.*(sass)+?/.test(item)) {
+        if (/^.*\.(sass|scss)+?$/.test(item)) {
             precompiler = sass;
-        } else if (/^.*(less)+?/.test(item)) {
+        } else if (/^.*\.(less)+?$/.test(item)) {
             precompiler = less;
         }
     });
