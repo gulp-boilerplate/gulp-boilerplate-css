@@ -30,7 +30,7 @@ module.exports = function (config) {
 
         var stream;
 
-        stream.gulp.src(config.src)
+        stream = gulp.src(config.src)
             .pipe(cached('styles'))
             .on('error', gutil.log.bind(this, error + ' CSS Error '));
 
