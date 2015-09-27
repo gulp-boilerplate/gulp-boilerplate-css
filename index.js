@@ -50,11 +50,11 @@ module.exports = function (config) {
             }));
         }
 
-        stream.pipe(autoprefixer({
-            browsers: ['last 2 versions'],
-            cascade: false
-        }))
-            .pipe(csso())
+        // stream.pipe(autoprefixer({
+        //     browsers: ['last 2 versions'],
+        //     cascade: false
+        // }))
+        stream.pipe(csso())
             .pipe(gulp.dest(config.dest));
         return gulp;
     };
