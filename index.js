@@ -18,7 +18,7 @@ module.exports = function (config) {
     var precompiler;
 
     config.options = assign({}, config.options);
-    config.src.each(function (item) {
+    config.src.forEach(function (item) {
         if (/^.*\.(sass|scss)+?$/.test(item)) {
             precompiler = sass;
         } else if (/^.*\.(less)+?$/.test(item)) {
