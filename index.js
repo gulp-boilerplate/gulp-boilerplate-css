@@ -14,8 +14,7 @@ var gulp = require('gulp'),
     success = symbols.success,
     error = symbols.error,
     autoprefixer = require('gulp-autoprefixer'),
-    assign = require('object-assign'),
-    debug = require('gulp-debug');
+    assign = require('object-assign');
 
 module.exports = function (config) {
     var precompiler;
