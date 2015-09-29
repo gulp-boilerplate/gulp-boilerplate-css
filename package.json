@@ -1,6 +1,6 @@
 {
   "name": "gulp-boilerplate-css",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Bootstrap for gulp tasks",
   "main": "gulpfile.js",
   "scripts": {
@@ -18,12 +18,14 @@
     "gulp-cached": "^1.0.4",
     "gulp-concat": "^2.5.2",
     "gulp-csso": "^1.0.0",
+    "gulp-if": "^1.2.5",
     "gulp-less": "^3.0.2",
     "gulp-print": "^1.1.0",
     "gulp-remember": "^0.3.0",
     "gulp-sass": "^2.0.4",
     "gulp-uncss": "^1.0.1",
     "gulp-util": "^3.0.4",
+    "lazypipe": "^1.0.1",
     "object-assign": "^4.0.1",
     "symbols": "git://github.com/marcoslhc/symbols.git"
   }
