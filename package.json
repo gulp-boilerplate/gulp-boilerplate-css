@@ -28,5 +28,8 @@
     "lazypipe": "^1.0.1",
     "object-assign": "^4.0.1",
     "symbols": "git://github.com/marcoslhc/symbols.git"
+  },
+  "devDependencies": {
+    "gulp-debug": "^2.1.0"
   }
 }

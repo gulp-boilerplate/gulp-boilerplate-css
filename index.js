@@ -14,7 +14,8 @@ var gulp = require('gulp'),
     success = symbols.success,
     error = symbols.error,
     autoprefixer = require('gulp-autoprefixer'),
-    assign = require('object-assign');
+    assign = require('object-assign'),
+    debug = require('gulp-debug');
 
 module.exports = function (config) {
     var precompiler;
@@ -30,29 +31,52 @@ module.exports = function (config) {
 
     return function () {
 
-        var stream;
+        var stream, optimizers;
 
         stream = lazypipe()
-        .pipe(cached('styles'))
-            .on('error', gutil.log.bind(this, error + ' CSS Error '))
-        .pipe(gulpif(precompiler, precompiler()))
-        .pipe(print(function (filepath) {
-            return gutil.colors.green(success) + ' ' + filepath;
-        }))
-        .pipe(remember('styles'))
-        .pipe(concat('site.css'))
-        .pipe(gulpif(config.options.uncss, uncss({
-            html: config.options.uncss.files || ['index.html']
-        })))
-        .pipe(autoprefixer({
-            browsers: ['last 2 versions'],
-            cascade: false
-        }))
-        .pipe(csso());
+            .pipe(function () {
+                console.log(precompiler);
+                return gulpif(precompiler, precompiler());
+            })
+            .pipe(function () {
+                return remember('styles');
+            })
+            .pipe(function () {
+                return concat('site.css');
+            });
+
+        optimizers = lazypipe()
+            .pipe(function () {
+                var files = ['index.html'],
+                    stripcss = false;
+
+                if (config.options.uncss) {
+                    stripcss = true;
+                    files = config.options.uncss.files;
+                }
+                return gulpif(stripcss, uncss({
+                    html: files
+                }));
+            })
+            .pipe(function () {
+                return autoprefixer({
+                    browsers: ['last 2 versions'],
+                    cascade: false
+                });
+            })
+            .pipe(csso);
 
         gulp.src(config.src)
-        .pipe(stream())
-        .pipe(gulp.dest(config.dest));
+            .pipe(cached('styles'))
+            .pipe(precompiler())
+            .pipe(optimizers())
+            .pipe(print(function (filepath) {
+                return gutil.colors.green(success) + ' ' + filepath;
+            }))
+            .on('error', gutil.log.bind(this, error + ' CSS Error '))
+
+            .pipe(gulp.dest(config.dest));
+
         return gulp;
     };
 };
