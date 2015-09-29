@@ -9,10 +9,13 @@ var gulp = require('gulp'),
     symbols = require('symbols'),
     remember = require('gulp-remember'),
     cached = require('gulp-cached'),
+    lazypipe = require('lazypipe'),
+    gulpif = require('gulp-if'),
     success = symbols.success,
     error = symbols.error,
     autoprefixer = require('gulp-autoprefixer'),
-    assign = require('object-assign');
+    assign = require('object-assign'),
+    debug = require('gulp-debug');
 
 module.exports = function (config) {
     var precompiler;
@@ -28,34 +31,52 @@ module.exports = function (config) {
 
     return function () {
 
-        var stream;
+        var stream, optimizers;
 
-        stream = gulp.src(config.src)
+        stream = lazypipe()
+            .pipe(function () {
+                console.log(precompiler);
+                return gulpif(precompiler, precompiler());
+            })
+            .pipe(function () {
+                return remember('styles');
+            })
+            .pipe(function () {
+                return concat('site.css');
+            });
+
+        optimizers = lazypipe()
+            .pipe(function () {
+                var files = ['index.html'],
+                    stripcss = false;
+
+                if (config.options.uncss) {
+                    stripcss = true;
+                    files = config.options.uncss.files;
+                }
+                return gulpif(stripcss, uncss({
+                    html: files
+                }));
+            })
+            .pipe(function () {
+                return autoprefixer({
+                    browsers: ['last 2 versions'],
+                    cascade: false
+                });
+            })
+            .pipe(csso);
+
+        gulp.src(config.src)
             .pipe(cached('styles'))
-            .on('error', gutil.log.bind(this, error + ' CSS Error '));
-
-        if (precompiler) {
-            stream.pipe(precompiler());
-        }
-
-        stream.pipe(print(function (filepath) {
+            .pipe(precompiler())
+            .pipe(optimizers())
+            .pipe(print(function (filepath) {
                 return gutil.colors.green(success) + ' ' + filepath;
             }))
-            .pipe(remember('styles'))
-            .pipe(concat('site.css'));
+            .on('error', gutil.log.bind(this, error + ' CSS Error '))
 
-        if (config.options.uncss) {
-            stream.pipe(uncss({
-                html: config.options.uncss.files || ['index.html']
-            }));
-        }
-
-        // stream.pipe(autoprefixer({
-        //     browsers: ['last 2 versions'],
-        //     cascade: false
-        // }))
-        stream.pipe(csso())
             .pipe(gulp.dest(config.dest));
+
         return gulp;
     };
 };
